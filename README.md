@@ -8,6 +8,8 @@ you will need to create the get-ec2 folder
 This can lookup by IP address, ID, or name
 
 get-ec2 1.1.1.1
+
 get-ec2 i-123456789abc
+
 get-ec2 myinstance
 
