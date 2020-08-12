@@ -9,43 +9,43 @@ function Get-EC2 {
     Try {
         switch -Regex ($ec2det) {
             
-            '^(?!i-)[a-zA-Z]' { $ec2filter = @{name = 'tag:Name'; values = "*" + "$ec2det" + "*" }
+            '^(?!i-)[a-zA-Z]' {
+                $ec2filter = @{name = 'tag:Name'; values = "*" + "$ec2det" + "*" }
                 $InstanceDet = get-ec2instance -filter $ec2filter
-                $properties = [ordered]@{id = $instancedet.instances.instanceid
-                    Type                    = $InstanceDet.instances.instancetype
-                    PrivateIP               = $InstanceDet.instances.PrivateIpAddress 
-                    OS                      = $InstanceDet.instances.Platform
-                    Name                    = $InstanceDet.instances.tag | Where-Object { $_.key -eq 'Name' } | select-object -ExpandProperty value 
-                    Running                 = $InstanceDet.instances.state | select-object -ExpandProperty   name
-                    VpcId                   = $InstanceDet.instances.vpcid
+                $obj = [PSCustomObject]@{
+                    id        = $instancedet.instances.instanceid
+                    Type      = $InstanceDet.instances.instancetype
+                    PrivateIP = $InstanceDet.instances.PrivateIpAddress 
+                    OS        = $InstanceDet.instances.Platform
+                    Name      = $InstanceDet.instances.tag | Where-Object { $_.key -eq 'Name' } | select-object -ExpandProperty value 
+                    Running   = $InstanceDet.instances.state | select-object -ExpandProperty   name
+                    VpcId     = $InstanceDet.instances.vpcid
                 }
-                $obj = New-Object -TypeName psobject -Property $properties 
-        
             }
             '^i-*' {
                 $InstanceDet = get-ec2instance -instanceid $ec2det
-                $properties = [ordered]@{id = $instancedet.instances.instanceid
-                    Type                    = $InstanceDet.instances.instancetype
-                    PrivateIP               = $InstanceDet.instances.PrivateIpAddress 
-                    OS                      = $InstanceDet.instances.Platform
-                    Name                    = $InstanceDet.instances.tag | Where-Object { $_.key -eq 'Name' } | select-object -ExpandProperty value 
-                    Running                 = $InstanceDet.instances.state | select-object -ExpandProperty   name
-                    VpcId                   = $InstanceDet.instances.vpcid
+                $obj = [PSCustomObject]@{
+                    id        = $instancedet.instances.instanceid
+                    Type      = $InstanceDet.instances.instancetype
+                    PrivateIP = $InstanceDet.instances.PrivateIpAddress 
+                    OS        = $InstanceDet.instances.Platform
+                    Name      = $InstanceDet.instances.tag | Where-Object { $_.key -eq 'Name' } | select-object -ExpandProperty value 
+                    Running   = $InstanceDet.instances.state | select-object -ExpandProperty   name
+                    VpcId     = $InstanceDet.instances.vpcid
                 }
-                $obj = New-Object -TypeName psobject -Property $properties 
             }
-            '(\d{1,3}\.){3}\d{1,3}' { $ec2filter = @{name = 'network-interface.addresses.private-ip-address'; values = "$ec2det" } 
+            '(\d{1,3}\.){3}\d{1,3}' {
+                $ec2filter = @{name = 'network-interface.addresses.private-ip-address'; values = "$ec2det" } 
                 $InstanceDet = get-ec2instance -filter $ec2filter
-                $properties = [ordered]@{id = $instancedet.instances.instanceid
-                    Type                    = $InstanceDet.instances.instancetype
-                    PrivateIP               = $InstanceDet.instances.PrivateIpAddress 
-                    OS                      = $InstanceDet.instances.Platform 
-                    Name                    = $InstanceDet.instances.tag | Where-Object { $_.key -eq 'Name' } | select-object -ExpandProperty value 
-                    Running                 = $InstanceDet.instances.state | select-object -ExpandProperty   name
-                    VpcId                   = $InstanceDet.instances.vpcid
+                $obj = [PSCustomObject]@{
+                    id        = $instancedet.instances.instanceid
+                    Type      = $InstanceDet.instances.instancetype
+                    PrivateIP = $InstanceDet.instances.PrivateIpAddress 
+                    OS        = $InstanceDet.instances.Platform 
+                    Name      = $InstanceDet.instances.tag | Where-Object { $_.key -eq 'Name' } | select-object -ExpandProperty value 
+                    Running   = $InstanceDet.instances.state | select-object -ExpandProperty   name
+                    VpcId     = $InstanceDet.instances.vpcid
                 }
-                $obj = New-Object -TypeName psobject -Property $properties 
-       
             }
         }
     }
